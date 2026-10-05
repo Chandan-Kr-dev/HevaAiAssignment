@@ -1,0 +1,92 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  FAILED
+}
+
+enum WebhookEventStatus {
+  PROCESSED
+  UNMATCHED
+  IGNORED
+}
+
+model User {
+  id        String   @id @default(uuid())
+  googleId  String   @unique @map("google_id")
+  email     String   @unique
+  name      String
+  avatarUrl String?  @map("avatar_url")
+  createdAt DateTime @default(now()) @map("created_at")
+  orders    Order[]
+
+  @@map("users")
+}
+
+model Product {
+  id          String   @id @default(uuid())
+  slug        String   @unique
+  name        String
+  description String
+  pricePaise  Int      @map("price_paise")
+  imageUrl    String   @map("image_url")
+  createdAt   DateTime @default(now()) @map("created_at")
+  orders      Order[]
+
+  @@map("products")
+}
+
+model Order {
+  id                      String      @id @default(uuid())
+  userId                  String      @map("user_id")
+  user                    User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId               String      @map("product_id")
+  product                 Product     @relation(fields: [productId], references: [id])
+  amountPaise             Int         @map("amount_paise")
+  currency                String      @default("INR")
+  status                  OrderStatus @default(PENDING)
+  razorpayOrderId         String?     @unique @map("razorpay_order_id")
+  paidAt                  DateTime?   @map("paid_at")
+  confirmationEmailSentAt DateTime?   @map("confirmation_email_sent_at")
+  createdAt               DateTime    @default(now()) @map("created_at")
+  updatedAt               DateTime    @updatedAt @map("updated_at")
+
+  @@index([userId, createdAt])
+  @@map("orders")
+}
+
+model WebhookEvent {
+  id              String             @id @default(uuid())
+  provider        String             @default("razorpay")
+  providerEventId String             @map("provider_event_id")
+  eventType       String             @map("event_type")
+  payload         Json
+  status          WebhookEventStatus
+  receivedAt      DateTime           @default(now()) @map("received_at")
+  processedAt     DateTime?          @map("processed_at")
+
+  // Idempotency: the same provider event can never be stored twice.
+  @@unique([provider, providerEventId])
+  @@map("webhook_events")
+}
+
+model FailedJob {
+  id           String   @id @default(uuid())
+  queue        String
+  jobId        String   @map("job_id")
+  name         String
+  data         Json
+  failedReason String   @map("failed_reason")
+  attemptsMade Int      @map("attempts_made")
+  failedAt     DateTime @default(now()) @map("failed_at")
+
+  @@map("failed_jobs")
+}
