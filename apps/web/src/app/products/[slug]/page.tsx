@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import { notFound } from "next/navigation";
+import { BuyButton } from "@/components/BuyButton";
+import { ProductMedia } from "@/components/ProductMedia";
 import { getProduct } from "@/lib/api";
 import { formatINR } from "@/lib/format";
+import { getProductModel } from "@/lib/models";
 
 // Always fresh: stock and price must never be served stale on a buy page.
 export const dynamic = "force-dynamic";
@@ -50,6 +52,7 @@ export default async function ProductPage({ params }: Props) {
   }
 
   const priceRupees = (product.pricePaise / 100).toFixed(2);
+  const model = getProductModel(product.slug);
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -68,31 +71,22 @@ export default async function ProductPage({ params }: Props) {
 
   return (
     <div className="grid gap-8 md:grid-cols-2">
-      <div className="aspect-square w-full overflow-hidden rounded-xl bg-zinc-100">
-        <Image
-          src={product.imageUrl}
-          alt={product.name}
-          width={800}
-          height={800}
-          sizes="(max-width: 768px) 100vw, 50vw"
-          className="h-auto w-full"
-          priority
-        />
-      </div>
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">{product.name}</h1>
-        <p className="mt-2 text-2xl text-zinc-800">
+      {/* Client island for the optional 3D viewer; the page stays a server
+          component and the poster image below is server-rendered. */}
+      <ProductMedia
+        imageUrl={product.imageUrl}
+        name={product.name}
+        modelSrc={model?.src}
+        modelAlt={model?.alt}
+      />
+      <div className="lg:sticky lg:top-24 lg:self-start">
+        <h1 className="text-balance text-3xl font-bold tracking-tight text-white md:text-4xl">{product.name}</h1>
+        <p className="mt-2 text-2xl font-semibold text-violet-300">
           {formatINR(product.pricePaise)}
         </p>
-        <p className="mt-4 leading-7 text-zinc-600">{product.description}</p>
-        {/* Checkout arrives later; the button stays inert until then. */}
-        <button
-          type="button"
-          disabled
-          className="mt-6 cursor-not-allowed rounded-full bg-zinc-300 px-8 py-3 font-medium text-zinc-500"
-        >
-          Buy now
-        </button>
+        <p className="mt-4 leading-7 text-zinc-400">{product.description}</p>
+        {/* Client island: the page itself stays a server component. */}
+        <BuyButton productId={product.id} productName={product.name} />
       </div>
       <script
         type="application/ld+json"

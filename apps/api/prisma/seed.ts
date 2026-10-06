@@ -7,50 +7,65 @@ type SeedProduct = {
   name: string;
   description: string;
   pricePaise: number;
+  imageUrl: string;
 };
 
+// Slugs are reused from the original catalog so existing product IDs (and any
+// orders pointing at them) stay valid; only the catalog data is replaced.
 const PRODUCTS: SeedProduct[] = [
   {
     slug: 'handloom-cotton-kurta',
-    name: 'Handloom Cotton Kurta',
+    name: 'Apple iPhone 16',
     description:
-      'Handwoven by artisan clusters in West Bengal from breathable long-staple cotton. A relaxed everyday fit with mother-of-pearl buttons and side slits for ease of movement.',
-    pricePaise: 129900,
+      'Apple iPhone 16 with A18 chip, 48MP Fusion camera, and 6.1-inch Super Retina XDR display.',
+    pricePaise: 7990000,
+    imageUrl:
+      'https://images.unsplash.com/photo-1758186378952-68ac2d1c8d39?q=80&w=1632&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
   },
   {
     slug: 'brass-diya-set-of-4',
-    name: 'Brass Diya Set of 4',
+    name: 'Samsung Galaxy S25',
     description:
-      'Cast in Moradabad from solid brass with a hand-hammered finish that glows when lit. Each set of four arrives gift-boxed with cotton wicks, ready for Diwali or daily aarti.',
-    pricePaise: 74900,
+      'Samsung Galaxy S25 flagship smartphone with a 6.2-inch Dynamic AMOLED 2X display and advanced Galaxy AI features.',
+    pricePaise: 8099900,
+    imageUrl:
+      'https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?auto=format&fit=crop&w=1200&q=80',
   },
   {
     slug: 'ceramic-chai-kulhad-set',
-    name: 'Ceramic Chai Kulhad Set of 6',
+    name: 'Google Pixel 9',
     description:
-      'Unglazed earthen-style ceramic kulhads that lend cutting chai its signature earthy aroma. Dishwasher-safe and chip-resistant, they bring the tapri experience to your kitchen shelf.',
-    pricePaise: 59900,
+      'Google Pixel 9 with Tensor G4, advanced Pixel AI features, and a professional-grade dual camera system.',
+    pricePaise: 7999900,
+    imageUrl:
+      'https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=1200&q=80',
   },
   {
     slug: 'mysore-sandal-soap-trio',
-    name: 'Mysore Sandal Soap Trio',
+    name: 'OnePlus 13',
     description:
-      'Three 150g bars milled with pure Mysore sandalwood oil for a creamy, long-lasting lather. The classic woody fragrance lingers on skin without overpowering the senses.',
-    pricePaise: 49900,
+      'OnePlus 13 flagship smartphone featuring Snapdragon performance, a high-refresh-rate AMOLED display, and Hasselblad cameras.',
+    pricePaise: 6999900,
+    imageUrl:
+      'https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?auto=format&fit=crop&w=1200&q=80',
   },
   {
     slug: 'block-print-bedsheet',
-    name: 'Jaipur Block-Print King Bedsheet',
+    name: 'Nothing Phone (3)',
     description:
-      'Hand block-printed in Sanganer with natural dyes on 200TC combed cotton. Includes two matching pillow covers, and the colours soften beautifully with every wash.',
-    pricePaise: 199900,
+      'Nothing Phone (3) with a distinctive transparent-inspired design, high-performance hardware, and a modern AMOLED display.',
+    pricePaise: 5999900,
+    imageUrl:
+      'https://images.unsplash.com/photo-1601784551446-20c9e07cdbdb?auto=format&fit=crop&w=1200&q=80',
   },
   {
     slug: 'south-indian-filter-coffee-maker',
-    name: 'South Indian Filter Coffee Maker',
+    name: 'Xiaomi 15',
     description:
-      'Traditional stainless-steel dabara set with a slow-drip upper chamber for strong decoction. Brews two tumblers of frothy kaapi in minutes and cleans up with a quick rinse.',
-    pricePaise: 249900,
+      'Xiaomi 15 flagship smartphone with a compact AMOLED display, Snapdragon performance, and Leica-powered camera technology.',
+    pricePaise: 6499900,
+    imageUrl:
+      'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=1200&q=80',
   },
 ];
 
@@ -63,14 +78,14 @@ async function main(): Promise<void> {
         name: product.name,
         description: product.description,
         pricePaise: product.pricePaise,
-        imageUrl: `https://picsum.photos/seed/${product.slug}/800/800`,
+        imageUrl: product.imageUrl,
       },
       create: {
         slug: product.slug,
         name: product.name,
         description: product.description,
         pricePaise: product.pricePaise,
-        imageUrl: `https://picsum.photos/seed/${product.slug}/800/800`,
+        imageUrl: product.imageUrl,
       },
     });
   }

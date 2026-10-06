@@ -15,3 +15,26 @@ export type SessionUser = {
   name: string;
   avatarUrl: string | null;
 };
+
+export type OrderStatus = "PENDING" | "PAID" | "FAILED";
+
+// Shape of GET /orders and GET /orders/:id. A display subset: the API never
+// sends provider internals (razorpay ids) or ops fields to the browser.
+export type Order = {
+  id: string;
+  status: OrderStatus;
+  amountPaise: number;
+  currency: string;
+  createdAt: string;
+  paidAt: string | null;
+  product: { name: string; slug: string; imageUrl: string };
+};
+
+// Shape of POST /orders: everything Razorpay Checkout needs, nothing more.
+export type CreateOrderResponse = {
+  orderId: string;
+  razorpayOrderId: string;
+  keyId: string;
+  amountPaise: number;
+  currency: string;
+};

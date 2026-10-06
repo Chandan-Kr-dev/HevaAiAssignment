@@ -1,6 +1,6 @@
 "use client";
 
-export default function Error({
+export default function OrdersError({
   error,
   reset,
 }: {
@@ -8,8 +8,8 @@ export default function Error({
   reset: () => void;
 }) {
   return (
-    <div className="py-24 text-center">
-      <h1 className="text-3xl font-bold text-white">Something went wrong</h1>
+    <div className="mx-auto mt-16 max-w-md rounded-2xl border border-white/10 bg-white/[0.03] p-8 text-center">
+      <h1 className="text-2xl font-bold text-white">Couldn&apos;t load your orders</h1>
       <p className="mt-2 text-zinc-400">{error.message}</p>
       <button
         type="button"
