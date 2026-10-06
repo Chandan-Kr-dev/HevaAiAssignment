@@ -2,8 +2,7 @@
 
 A small phone storefront where the money, the webhook and the notification all agree. A visitor browses products, signs in with Google, pays through Razorpay (test mode), and the order becomes **paid only when a signature-verified webhook says so**. A background job then sends a confirmation email, and the order status page flips from pending to paid on its own.
 
-**Demo video (2 min):** [FILL: link or file name]
-**Repository:** [FILL: GitHub URL]
+
 
 ## Stack
 
@@ -238,7 +237,7 @@ Extra cases: unknown order returns 503 and the retry is processed later, `paymen
 | Expiry of abandoned PENDING orders | Skipped | Would need a scheduled cleanup job |
 | Admin UI for failed jobs | Skipped | API endpoint only |
 | Rate limiting, refunds, inventory, multi-item carts | Skipped | Out of scope for 24 hours |
-| Deployed URL | [FILL: Skipped or link] | Runs locally via Docker Compose |
+| Deployed URL |  | Runs locally via Docker Compose |
 
 ## Lighthouse (mobile)
 
