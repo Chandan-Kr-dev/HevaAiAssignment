@@ -2,6 +2,8 @@
 
 A small phone storefront where the money, the webhook and the notification all agree. A visitor browses products, signs in with Google, pays through Razorpay (test mode), and the order becomes **paid only when a signature-verified webhook says so**. A background job then sends a confirmation email, and the order status page flips from pending to paid on its own.
 
+Demo Video [Demo](https://youtu.be/rSk4HwQ74zY).
+
 
 
 ## Stack
@@ -248,8 +250,6 @@ Extra cases: unknown order returns 503 and the retry is processed later, `paymen
 
 Run against a production build (`npm run build && npm run start`) in an incognito window. [FILL: one line on why any score is below target, if applicable.]
 
-![Home page Lighthouse](docs/lighthouse/home.png)
-![Product page Lighthouse](docs/lighthouse/product.png)
 
 ## Known limitations and next steps
 
