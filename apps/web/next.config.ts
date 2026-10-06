@@ -23,6 +23,11 @@ const nextConfig: NextConfig = {
   async rewrites() {
     // A proxy ONLY so the session cookie stays same-origin in the browser.
     // No logic lives in Next.js: every /api/* request is forwarded to NestJS.
+    if (!process.env.API_INTERNAL_URL) {
+      throw new Error(
+        "API_INTERNAL_URL is not set: the /api/* rewrite would point at 'undefined'. Set it to your API base URL (no trailing slash).",
+      );
+    }
     return [
       {
         source: "/api/:path*",

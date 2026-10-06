@@ -7,6 +7,7 @@ import { ProductMedia } from "@/components/ProductMedia";
 import { ShinyText } from "@/components/ui/ShinyText";
 import { getProduct } from "@/lib/api";
 import { formatINR } from "@/lib/format";
+import { getSiteUrl } from "@/lib/site-url";
 import { getProductModel } from "@/lib/models";
 
 // Always fresh: stock and price must never be served stale on a buy page.
@@ -17,7 +18,8 @@ type Props = {
 };
 
 function canonicalPath(slug: string): string {
-  return `/products/${slug}`;
+  // Absolute: crawlers and social cards need the full URL, not a path.
+  return `${getSiteUrl()}/products/${slug}`;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

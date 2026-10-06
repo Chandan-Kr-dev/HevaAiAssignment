@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Inter } from "next/font/google";
 import { AuthProvider } from "@/components/AuthProvider";
 import { Header } from "@/components/Header";
+import { getSiteUrl } from "@/lib/site-url";
 import { ShinyText } from "@/components/ui/ShinyText";
 import "./globals.css";
 
@@ -13,9 +14,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3001",
-  ),
+  metadataBase: new URL(getSiteUrl()),
   title: {
     default: "Heva Store",
     template: "%s | Heva Store",

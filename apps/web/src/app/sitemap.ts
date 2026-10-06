@@ -1,17 +1,21 @@
 import type { MetadataRoute } from "next";
 import { getProducts } from "@/lib/api";
-
-function siteUrl(): string {
-  return process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3001";
-}
+import { getSiteUrl } from "@/lib/site-url";
 
 // Rebuilt hourly: the catalog changes rarely, and entries only add up.
 export const revalidate = 3600;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const base = siteUrl();
+  const base = getSiteUrl();
   const now = new Date();
-  const products = await getProducts();
+  let products: Array<{ slug: string }> = [];
+  try {
+    products = await getProducts();
+  } catch {
+    // A catalog outage must not fail the build: ship home-only and let the
+    // hourly revalidation pick the products back up.
+    return [{ url: base, lastModified: now }];
+  }
   return [
     { url: base, lastModified: now },
     ...products.map((product) => ({
