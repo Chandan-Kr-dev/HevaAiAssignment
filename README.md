@@ -244,8 +244,8 @@ Extra cases: unknown order returns 503 and the retry is processed later, `paymen
 
 | Page | Performance | Accessibility | Best Practices | SEO |
 |---|---|---|---|---|
-| Product list `/` | [FILL] | [FILL] | [FILL] | [FILL] |
-| Product detail `/products/apple-iphone-16` | [FILL] | [FILL] | [FILL] | [FILL] |
+| Product list `/` | [73] | [96] | [96] | [100] |
+| Product detail `/products/apple-iphone-16` | [66] | [96] | [96] | [100] |
 
 Run against a production build (`npm run build && npm run start`) in an incognito window. [FILL: one line on why any score is below target, if applicable.]
 
