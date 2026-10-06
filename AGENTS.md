@@ -3,7 +3,7 @@
 A small storefront. A visitor browses products without signing in. To buy, they sign in with Google.
 Checkout creates a pending order and a Razorpay order (test mode). The order becomes PAID only when a
 signature-verified Razorpay webhook says so. When an order becomes PAID, a BullMQ job sends a
-confirmation email via SendGrid. The user sees the order go from pending to paid on a status page by polling.
+confirmation email via Mailgun. The user sees the order go from pending to paid on a status page by polling.
 ## Repo layout (monorepo, no workspaces tool)
 - apps/api = NestJS + TypeScript + Prisma + PostgreSQL + BullMQ (Redis). ALL business logic lives here.
 - apps/web = Next.js (App Router) + TypeScript + Tailwind. UI only. NO business logic.
@@ -22,7 +22,7 @@ confirmation email via SendGrid. The user sees the order go from pending to paid
 10. No commerce starter kits, no cloned boilerplate.
 ## Tech decisions (do not change)
 - Prisma 6 (pin prisma@6 and @prisma/client@6; do NOT use Prisma 7).
-- Payments: Razorpay, test mode. Email: SendGrid. Queue: BullMQ with Redis.
+- Payments: Razorpay, test mode. Email: Mailgun (REST API, called with built-in fetch, no SDK). Queue: BullMQ with Redis.
 - Money is stored as integer paise (Int). Currency INR.
 - Session: our own JWT in an httpOnly, SameSite=Lax cookie named `session`. Secure flag when NODE_ENV=production.
 - Order status enum: PENDING | PAID | FAILED. PAID is terminal and never goes backwards.
