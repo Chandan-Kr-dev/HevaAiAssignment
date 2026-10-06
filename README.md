@@ -239,7 +239,7 @@ Extra cases: unknown order returns 503 and the retry is processed later, `paymen
 | Expiry of abandoned PENDING orders | Skipped | Would need a scheduled cleanup job |
 | Admin UI for failed jobs | Skipped | API endpoint only |
 | Rate limiting, refunds, inventory, multi-item carts | Skipped | Out of scope for 24 hours |
-| Deployed URL |  | Runs locally via Docker Compose |
+| Deployed URL | Visit(https://heva-ai-assignment.vercel.app/) | Runs locally via Docker Compose |
 
 ## Lighthouse (mobile)
 
