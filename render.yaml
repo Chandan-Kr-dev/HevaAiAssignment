@@ -7,7 +7,7 @@ services:
     name: heva-api
     runtime: node
     plan: free
-    rootDirectory: apps/api
+    rootDir: apps/api
     buildCommand: npm ci && npx prisma generate && npm run build
     # migrate on every boot (idempotent): covers databases recreated after the app.
     startCommand: npx prisma migrate deploy && npm run start:prod
