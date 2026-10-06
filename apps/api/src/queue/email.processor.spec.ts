@@ -48,6 +48,11 @@ function setup(sentAt: Date | null, status = 'PAID') {
   const processor = new EmailProcessor(
     prisma as unknown as PrismaService,
     email,
+    // Config double: WEB_URL is only read to build the status-page CTA.
+    {
+      get: (key: string) =>
+        key === 'WEB_URL' ? 'http://localhost:3001' : undefined,
+    } as never,
   );
   return { prisma: prisma as unknown as FakePrisma, email, processor };
 }
@@ -62,6 +67,11 @@ describe('EmailProcessor', () => {
 
     expect(email.sent).toHaveLength(1);
     expect(email.sent[0]?.to).toBe('buyer@example.com');
+    // Modern template: card markup with a CTA back to the status page.
+    expect(email.sent[0]?.html).toContain('Track your order');
+    expect(email.sent[0]?.html).toContain(
+      `http://localhost:3001/orders/${ORDER_ID}`,
+    );
     expect(prisma.order.update).toHaveBeenCalledWith({
       where: { id: ORDER_ID },
       data: { confirmationEmailSentAt: expect.any(Date) },

@@ -1,8 +1,14 @@
 import { OnWorkerEvent, Processor, WorkerHost } from '@nestjs/bullmq';
 import { Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import type { Job } from 'bullmq';
 import type { Prisma } from '@prisma/client';
 import { EmailProvider } from '../email/email-provider.js';
+import {
+  orderConfirmedHtml,
+  orderConfirmedSubject,
+  orderConfirmedText,
+} from '../email/order-confirmed.template.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 
 @Processor('email')
@@ -13,6 +19,7 @@ export class EmailProcessor extends WorkerHost {
   constructor(
     private readonly prisma: PrismaService,
     private readonly email: EmailProvider,
+    private readonly config: ConfigService,
   ) {
     super();
   }
@@ -35,16 +42,21 @@ export class EmailProcessor extends WorkerHost {
       throw new Error(`Order not paid: ${orderId}`);
     }
     const rupees = (order.amountPaise / 100).toFixed(2);
-    const subject = `Your Heva order is confirmed`;
-    const text =
-      `Hi ${order.user.name},\n\n` +
-      `Your order for ${order.product.name} (INR ${rupees}) is confirmed.\n` +
-      `Order ID: ${order.id}\n\nThanks for shopping with Heva!`;
-    const html =
-      `<p>Hi ${order.user.name},</p>` +
-      `<p>Your order for <strong>${order.product.name}</strong> (INR ${rupees}) is confirmed.</p>` +
-      `<p>Order ID: ${order.id}</p>` +
-      `<p>Thanks for shopping with Heva!</p>`;
+    // The CTA needs the public origin of the status page; WEB_URL is the
+    // established browser-facing base (same value auth redirects use).
+    const webUrl =
+      this.config.get<string>('WEB_URL') ?? 'http://localhost:3001';
+    const templateData = {
+      customerName: order.user.name,
+      productName: order.product.name,
+      productImageUrl: order.product.imageUrl,
+      amountInr: rupees,
+      orderId: order.id,
+      statusUrl: `${webUrl}/orders/${order.id}`,
+    };
+    const subject = orderConfirmedSubject();
+    const text = orderConfirmedText(templateData);
+    const html = orderConfirmedHtml(templateData);
     await this.email.send({
       to: order.user.email,
       subject,
@@ -65,10 +77,7 @@ export class EmailProcessor extends WorkerHost {
   // retries that eventually succeed need no trace. The job itself stays in
   // Redis (removeOnFail: false) regardless.
   @OnWorkerEvent('failed')
-  async onFailed(
-    job: Job<{ orderId: string }>,
-    error: Error,
-  ): Promise<void> {
+  async onFailed(job: Job<{ orderId: string }>, error: Error): Promise<void> {
     const maxAttempts = job.opts.attempts ?? 1;
     if (job.attemptsMade < maxAttempts) {
       return;

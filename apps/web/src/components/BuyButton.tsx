@@ -4,6 +4,7 @@ import Script from "next/script";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { AnimatedButton } from "./ui/AnimatedButton";
+import { HoverBorderGradient } from "./ui/HoverBorderGradient";
 import { useAuth } from "./AuthProvider";
 import { ApiError, apiFetch } from "@/lib/client-api";
 import type { CreateOrderResponse } from "@/lib/types";
@@ -44,12 +45,14 @@ export function BuyButton({
 
   if (!user) {
     return (
-      <a
+      <HoverBorderGradient
+        as="a"
         href="/api/auth/google"
-        className="mt-6 inline-flex min-h-[44px] items-center rounded-full bg-accent px-8 font-medium text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-300"
+        containerClassName="mt-6 min-h-[44px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-300"
+        className="flex min-h-[42px] items-center bg-accent"
       >
         Sign in to buy
-      </a>
+      </HoverBorderGradient>
     );
   }
 

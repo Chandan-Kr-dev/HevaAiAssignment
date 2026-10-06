@@ -5,6 +5,8 @@ import { useEffect, useRef, useState } from "react";
 import { useAuth } from "./AuthProvider";
 import { Badge } from "./ui/Badge";
 import { ConfettiBurst } from "./ui/ConfettiBurst";
+import { HoverBorderGradient } from "./ui/HoverBorderGradient";
+import { ShimmeringText } from "./ui/ShimmeringText";
 import { ApiError, apiFetch } from "@/lib/client-api";
 import { formatINR } from "@/lib/format";
 import type { Order } from "@/lib/types";
@@ -111,21 +113,25 @@ export function OrderStatus({ orderId }: { orderId: string }) {
 
   if (error === "signed-out") {
     return (
-      <div className="mx-auto mt-16 max-w-md rounded-2xl border border-white/10 bg-white/[0.03] p-8 text-center">
+      <div className="mx-auto mt-16 max-w-md rounded-3xl border border-white/10 bg-white/[0.03] p-8 text-center">
         <h1 className="text-2xl font-bold text-white">Please sign in</h1>
-        <a
-          href="/api/auth/google"
-          className="mt-6 inline-flex min-h-[44px] items-center rounded-full bg-accent px-6 font-medium text-white"
-        >
-          Sign in with Google
-        </a>
+        <div className="mt-6 flex justify-center">
+          <HoverBorderGradient
+            as="a"
+            href="/api/auth/google"
+            containerClassName="min-h-[44px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-300"
+            className="flex min-h-[42px] items-center bg-accent"
+          >
+            Sign in with Google
+          </HoverBorderGradient>
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="mx-auto mt-16 max-w-md rounded-2xl border border-white/10 bg-white/[0.03] p-8 text-center">
+      <div className="mx-auto mt-16 max-w-md rounded-3xl border border-white/10 bg-white/[0.03] p-8 text-center">
         <h1 className="text-2xl font-bold text-white">Order status</h1>
         <p className="mt-2 text-zinc-400">{error}</p>
       </div>
@@ -136,15 +142,24 @@ export function OrderStatus({ orderId }: { orderId: string }) {
     return (
       <div
         aria-label="Loading order"
-        className="mx-auto mt-8 h-48 max-w-xl animate-pulse rounded-2xl bg-white/10"
+        className="mx-auto mt-8 h-64 max-w-xl animate-pulse rounded-3xl border border-white/10 bg-white/[0.03]"
       />
     );
   }
 
   return (
-    <div className="relative mx-auto mt-8 max-w-xl overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] p-8">
+    <div className="relative mx-auto mt-8 max-w-xl overflow-hidden rounded-3xl border border-white/10 bg-white/[0.03] p-8 shadow-[0_30px_80px_-45px_rgba(124,58,237,0.9)] backdrop-blur-xl">
       {celebrate ? <ConfettiBurst /> : null}
-      <div className="flex items-center justify-between gap-3">
+      {/* Hairline + bloom: the status card should read as the lit centerpiece. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet-400/70 to-transparent"
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -top-24 right-0 h-44 w-56 rounded-full bg-accent/25 blur-3xl"
+      />
+      <div className="relative flex items-center justify-between gap-3">
         <h1 className="text-2xl font-bold tracking-tight text-white">Order status</h1>
         <Badge
           tone={
@@ -176,13 +191,14 @@ export function OrderStatus({ orderId }: { orderId: string }) {
           <dd className="text-zinc-100">{formatINR(order.amountPaise)}</dd>
         </div>
       </dl>
+      <StatusStepper status={order.status} />
       {order.status === "PAID" ? (
-        <p className="mt-4 rounded-lg bg-emerald-400/10 p-3 text-sm text-emerald-200">
+        <p className="mt-4 rounded-xl bg-emerald-400/10 p-3 text-sm text-emerald-200 ring-1 ring-inset ring-emerald-300/20">
           Payment confirmed. Confirmation email on its way.
         </p>
       ) : null}
       {order.status === "FAILED" ? (
-        <p className="mt-4 rounded-lg bg-red-400/10 p-3 text-sm text-red-200">
+        <p className="mt-4 rounded-xl bg-red-400/10 p-3 text-sm text-red-200 ring-1 ring-inset ring-red-300/20">
           Payment failed.{" "}
           <Link
             href={`/products/${order.product.slug}`}
@@ -195,11 +211,89 @@ export function OrderStatus({ orderId }: { orderId: string }) {
         </p>
       ) : null}
       {timedOut && order.status === "PENDING" ? (
-        <p className="mt-4 rounded-lg bg-amber-400/10 p-3 text-sm text-amber-200">
-          Still waiting for payment confirmation. You can leave this page;
-          we&apos;ll email you.
+        <p className="mt-4 rounded-xl bg-amber-400/10 p-3 text-sm text-amber-200 ring-1 ring-inset ring-amber-300/20">
+          <ShimmeringText
+            text="Still waiting for payment confirmation. You can leave this page; we'll email you."
+            color="#fcd34d"
+            shimmeringColor="#fef3c7"
+          />
         </p>
       ) : null}
     </div>
+  );
+}
+
+type StepState = "done" | "active" | "failed" | "idle";
+
+const DOT: Record<StepState, string> = {
+  done: "bg-emerald-400 text-emerald-950 shadow-[0_0_12px_rgba(52,211,153,0.7)]",
+  active: "bg-amber-400 text-amber-950 shadow-[0_0_12px_rgba(251,191,36,0.7)]",
+  failed: "bg-red-400 text-red-950 shadow-[0_0_12px_rgba(248,113,113,0.7)]",
+  idle: "bg-white/15 text-zinc-400",
+};
+
+const LABEL: Record<StepState, string> = {
+  done: "text-zinc-200",
+  active: "text-amber-200",
+  failed: "text-red-200",
+  idle: "text-zinc-500",
+};
+
+const MARK: Record<StepState, string> = {
+  done: "\u2713",
+  active: "",
+  failed: "\u2715",
+  idle: "",
+};
+
+// Purely presentational rail: mirrors the status the API already reported
+// (never infers a state of its own). PENDING lights only the "Payment" step,
+// PAID completes the email step too, FAILED stops the rail at payment.
+function StatusStepper({ status }: { status: Order["status"] }) {
+  const steps: { label: string; state: StepState }[] = [
+    { label: "Order placed", state: "done" },
+    {
+      label: "Payment",
+      state:
+        status === "PAID" ? "done" : status === "FAILED" ? "failed" : "active",
+    },
+    {
+      label: "Confirmation email",
+      state: status === "PAID" ? "done" : "idle",
+    },
+  ];
+
+  return (
+    <ol
+      aria-label="Order progress"
+      className="mt-6 flex items-center gap-1 text-[11px] font-medium sm:text-xs"
+    >
+      {steps.map((step, index) => {
+        const last = index === steps.length - 1;
+        return (
+          <li key={step.label} className="flex min-w-0 flex-1 items-center">
+            <span className="flex min-w-0 items-center gap-1.5">
+              <span
+                aria-hidden="true"
+                className={`grid h-5 w-5 shrink-0 place-items-center rounded-full text-[10px] font-bold ${DOT[step.state]}`}
+              >
+                {MARK[step.state]}
+              </span>
+              <span className={`truncate ${LABEL[step.state]}`}>
+                {step.label}
+              </span>
+            </span>
+            {last ? null : (
+              <span
+                aria-hidden="true"
+                className={`mx-2 h-px min-w-3 flex-1 ${
+                  step.state === "done" ? "bg-emerald-400/50" : "bg-white/10"
+                }`}
+              />
+            )}
+          </li>
+        );
+      })}
+    </ol>
   );
 }

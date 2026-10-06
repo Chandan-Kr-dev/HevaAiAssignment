@@ -82,7 +82,7 @@ export class AuthController {
     // Fixed redirect target from config: never trust a client-supplied
     // return URL (open-redirect risk).
     const webUrl =
-      this.config.get<string>('WEB_URL') ?? 'http://localhost:3000';
+      this.config.get<string>('WEB_URL') ?? 'http://localhost:3001';
     res.redirect(`${webUrl}/orders`);
   }
 

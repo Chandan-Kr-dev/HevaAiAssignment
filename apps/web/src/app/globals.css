@@ -20,8 +20,90 @@
   --font-mono: var(--font-geist-mono);
 }
 
+/* Decorative animation tokens (React Bits StarBorder + Aceternity Aurora).
+   Declared as theme entries so Tailwind emits the matching utilities. */
+@theme {
+  --animate-star-movement-top: star-movement-top linear infinite alternate;
+  --animate-star-movement-bottom: star-movement-bottom linear infinite alternate;
+}
+
+@keyframes star-movement-top {
+  0% {
+    transform: translate(0%, 0%);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(100%, 0%);
+    opacity: 0;
+  }
+}
+
+@keyframes star-movement-bottom {
+  0% {
+    transform: translate(0%, 0%);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-100%, 0%);
+    opacity: 0;
+  }
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Faint blueprint grid over the storefront. Masked so it fades out instead of
+   ending on a hard edge; purely decorative (aria-hidden in layout). */
+.ambient-grid {
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 56px 56px;
+  -webkit-mask-image: radial-gradient(ellipse 90% 60% at 50% 0%, black 20%, transparent 85%);
+  mask-image: radial-gradient(ellipse 90% 60% at 50% 0%, black 20%, transparent 85%);
+}
+
+/* Aceternity Aurora idiom, retuned to the store's violet/fuchsia palette:
+   a blurred, slowly drifting colour wash behind the hero. One layer, GPU
+   friendly (background-position only), disabled under reduced motion below. */
+.aurora-layer {
+  background-image: repeating-linear-gradient(
+    100deg,
+    #6d28d9 0%,
+    #7c3aed 8%,
+    #a78bfa 14%,
+    #e879f9 20%,
+    #8b5cf6 28%,
+    #6d28d9 36%
+  );
+  background-size: 300% 100%;
+  filter: blur(56px) saturate(130%);
+  opacity: 0.32;
+  -webkit-mask-image: radial-gradient(ellipse 75% 65% at 50% 15%, black 25%, transparent 78%);
+  mask-image: radial-gradient(ellipse 75% 65% at 50% 15%, black 25%, transparent 78%);
+  animation: aurora-drift 38s ease-in-out infinite;
+}
+
+@keyframes aurora-drift {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* One switch for every decorative loop: borders park off-canvas (their
+   resting state), the aurora freezes mid-drift. JS-driven effects already
+   check prefers-reduced-motion themselves. */
+@media (prefers-reduced-motion: reduce) {
+  .aurora-layer,
+  .animate-star-movement-top,
+  .animate-star-movement-bottom {
+    animation: none !important;
+  }
 }

@@ -15,7 +15,7 @@ async function bootstrap() {
   // Populate req.cookies (plain, unsigned) for the session and oauth_state guards.
   app.use(cookieParser());
   const config = app.get(ConfigService);
-  const webUrl = config.get<string>('WEB_URL') ?? 'http://localhost:3000';
+  const webUrl = config.get<string>('WEB_URL') ?? 'http://localhost:3001';
   const port = Number(config.get<string>('PORT') ?? '4000');
   // Strip unknown props and coerce payloads on every request.
   app.useGlobalPipes(

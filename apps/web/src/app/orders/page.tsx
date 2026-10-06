@@ -9,7 +9,17 @@ export const metadata: Metadata = {
 export default function OrdersPage() {
   return (
     <RequireAuth>
-      <h1 className="mb-6 text-2xl font-bold tracking-tight">Your orders</h1>
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold tracking-tight text-white">
+          Your{" "}
+          <span className="bg-gradient-to-r from-violet-300 to-fuchsia-400 bg-clip-text text-transparent">
+            orders
+          </span>
+        </h1>
+        <p className="mt-1 text-sm text-zinc-400">
+          Every order, from pending to paid, in one place.
+        </p>
+      </div>
       <OrdersList />
     </RequireAuth>
   );

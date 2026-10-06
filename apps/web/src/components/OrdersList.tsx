@@ -55,12 +55,18 @@ export function OrdersList() {
 
   if (error) {
     return (
-      <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-8 text-center">
-        <p className="text-zinc-400">{error}</p>
+      <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-8 text-center">
+        <span
+          aria-hidden="true"
+          className="mx-auto grid h-11 w-11 place-items-center rounded-2xl bg-red-400/10 text-lg ring-1 ring-inset ring-red-400/25"
+        >
+          !
+        </span>
+        <p className="mt-3 text-zinc-400">{error}</p>
         <button
           type="button"
           onClick={() => void load()}
-          className="mt-4 inline-flex min-h-[44px] items-center rounded-full bg-accent px-6 text-sm font-medium text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-300"
+          className="mt-5 inline-flex min-h-[44px] items-center rounded-full bg-gradient-to-b from-violet-400 via-accent to-violet-700 px-6 text-sm font-semibold text-white ring-1 ring-inset ring-white/20 transition-[filter] hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-300"
         >
           Retry
         </button>
@@ -74,7 +80,7 @@ export function OrdersList() {
         {Array.from({ length: 3 }).map((_, i) => (
           <li
             key={i}
-            className="h-20 animate-pulse rounded-2xl border border-white/10 bg-white/[0.03]"
+            className="h-20 animate-pulse rounded-3xl border border-white/10 bg-white/[0.03]"
           />
         ))}
       </ul>
@@ -83,11 +89,17 @@ export function OrdersList() {
 
   if (orders.length === 0) {
     return (
-      <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-8 text-center">
-        <p className="text-zinc-400">No orders yet.</p>
+      <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-8 text-center">
+        <span
+          aria-hidden="true"
+          className="mx-auto grid h-11 w-11 place-items-center rounded-2xl bg-violet-400/10 text-lg ring-1 ring-inset ring-violet-400/25"
+        >
+          ⚖
+        </span>
+        <p className="mt-3 text-zinc-400">No orders yet.</p>
         <Link
           href="/"
-          className="mt-4 inline-flex min-h-[44px] items-center rounded-full bg-accent px-6 text-sm font-medium text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-300"
+          className="mt-5 inline-flex min-h-[44px] items-center rounded-full bg-gradient-to-b from-violet-400 via-accent to-violet-700 px-6 text-sm font-semibold text-white ring-1 ring-inset ring-white/20 transition-[filter] hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-300"
         >
           Browse products
         </Link>
@@ -100,27 +112,45 @@ export function OrdersList() {
       {orders.map((order) => (
         <li
           key={order.id}
-          className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 transition-colors hover:border-violet-400/30"
+          className="group rounded-3xl border border-white/10 bg-white/[0.03] p-4 transition-all duration-300 hover:border-violet-400/40 hover:bg-white/[0.05] hover:shadow-[0_20px_50px_-30px_rgba(124,58,237,0.9)]"
         >
-          <Link href={`/orders/${order.id}`} className="flex min-w-0 items-center justify-between gap-4 rounded-xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-300">
-            <div className="min-w-0">
-              <p className="truncate font-semibold text-zinc-100">{order.product.name}</p>
-              <p className="text-sm text-zinc-400">
-                {formatINR(order.amountPaise)} · {formatDate(order.createdAt)}
-              </p>
+          <Link
+            href={`/orders/${order.id}`}
+            className="flex min-w-0 items-center justify-between gap-4 rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-300"
+          >
+            <div className="flex min-w-0 items-center gap-3">
+              <span
+                aria-hidden="true"
+                className="h-10 w-1 shrink-0 rounded-full bg-gradient-to-b from-violet-400 to-fuchsia-500 opacity-60 transition-opacity group-hover:opacity-100"
+              />
+              <div className="min-w-0">
+                <p className="truncate font-semibold text-zinc-100">
+                  {order.product.name}
+                </p>
+                <p className="text-sm text-zinc-400">
+                  {formatINR(order.amountPaise)} · {formatDate(order.createdAt)}
+                </p>
+              </div>
             </div>
-            <Badge
-              tone={
-                order.status === "PAID"
-                  ? "paid"
-                  : order.status === "FAILED"
-                    ? "failed"
-                    : "pending"
-              }
-              className="shrink-0"
-            >
-              {order.status}
-            </Badge>
+            <div className="flex shrink-0 items-center gap-2">
+              <Badge
+                tone={
+                  order.status === "PAID"
+                    ? "paid"
+                    : order.status === "FAILED"
+                      ? "failed"
+                      : "pending"
+                }
+              >
+                {order.status}
+              </Badge>
+              <span
+                aria-hidden="true"
+                className="text-zinc-500 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-violet-300"
+              >
+                →
+              </span>
+            </div>
           </Link>
         </li>
       ))}

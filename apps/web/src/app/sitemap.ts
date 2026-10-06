@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { getProducts } from "@/lib/api";
 
 function siteUrl(): string {
-  return process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  return process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3001";
 }
 
 // Rebuilt hourly: the catalog changes rarely, and entries only add up.

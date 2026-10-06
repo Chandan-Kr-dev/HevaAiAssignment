@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState, type Ref } from "react";
+import { GlareHover } from "./ui/GlareHover";
 
 type ProductMediaProps = {
   imageUrl: string;
@@ -87,7 +88,7 @@ export function ProductMedia({
 
   return (
     <div>
-      <div className="aspect-square w-full overflow-hidden rounded-2xl border border-white/10 bg-white/5">
+      <div className="aspect-square w-full overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.07] to-white/[0.02] shadow-[0_30px_80px_-40px_rgba(124,58,237,0.65)]">
         {view === "model" && !libFailed ? (
           // Same box, full-bleed viewer: zero layout shift on swap. The
           // poster attribute keeps the photo visible until the model loads.
@@ -106,15 +107,21 @@ export function ProductMedia({
             style={{ width: "100%", height: "100%" }}
           />
         ) : (
-          <Image
-            src={imageUrl}
-            alt={name}
-            width={800}
-            height={800}
-            sizes="(max-width: 768px) 100vw, 50vw"
-            className="h-auto w-full"
-            priority
-          />
+          <GlareHover
+            className="h-full w-full"
+            glareColor="#c4b5fd"
+            glareOpacity={0.28}
+          >
+            <Image
+              src={imageUrl}
+              alt={name}
+              width={800}
+              height={800}
+              sizes="(max-width: 768px) 100vw, 50vw"
+              className="h-full w-full object-cover"
+              priority
+            />
+          </GlareHover>
         )}
       </div>
       {view === "loading-model" ? (
@@ -129,7 +136,7 @@ export function ProductMedia({
               type="button"
               onClick={() => void show3D()}
               aria-pressed="false"
-              className="inline-flex min-h-[44px] items-center rounded-full border border-violet-400/40 bg-violet-400/10 px-5 text-sm font-medium text-violet-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-300"
+              className="inline-flex min-h-[44px] items-center rounded-full bg-gradient-to-b from-violet-400 via-accent to-violet-700 px-5 text-sm font-semibold text-white ring-1 ring-inset ring-white/20 transition-[filter] hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-300"
             >
               View in 3D
             </button>
@@ -138,7 +145,7 @@ export function ProductMedia({
               type="button"
               onClick={showPoster}
               aria-pressed="true"
-              className="inline-flex min-h-[44px] items-center rounded-full border border-white/15 bg-white/5 px-5 text-sm font-medium text-zinc-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-300"
+              className="inline-flex min-h-[44px] items-center rounded-full border border-white/15 bg-white/5 px-5 text-sm font-medium text-zinc-200 transition-colors hover:border-violet-400/40 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-300"
             >
               Back to photo
             </button>
