@@ -22,6 +22,8 @@ import { OAuthStateGuard } from './oauth-state.guard.js';
   ],
   controllers: [AuthController],
   providers: [GoogleStrategy, GoogleAuthGuard, OAuthStateGuard, JwtAuthGuard],
-  exports: [JwtAuthGuard],
+  // Re-export JwtModule/UsersModule so modules using JwtAuthGuard can also
+  // resolve its JwtService/UsersService dependencies.
+  exports: [JwtAuthGuard, JwtModule, UsersModule],
 })
 export class AuthModule {}

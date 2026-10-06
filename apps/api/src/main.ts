@@ -1,11 +1,17 @@
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
+import type { NestExpressApplication } from '@nestjs/platform-express';
 import cookieParser from 'cookie-parser';
 import { AppModule } from './app.module.js';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  // rawBody: HMAC must be computed over the exact bytes Razorpay sent; parsed +
+  // re-serialized JSON can differ (whitespace, key order, unicode escapes) so
+  // the signature would not match.
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    rawBody: true,
+  });
   // Populate req.cookies (plain, unsigned) for the session and oauth_state guards.
   app.use(cookieParser());
   const config = app.get(ConfigService);
